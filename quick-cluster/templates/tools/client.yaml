@@ -5,6 +5,7 @@ metadata:
   name: {{ .Values.name }}-mongoclient
   namespace: {{ .Release.Namespace }}
 spec:
+  restartPolicy: Always
   containers:
   - command:
     - sleep
@@ -12,6 +13,7 @@ spec:
     image: mongo
     name: mongoclient
     resources: {}
+{{- if .Values.tlsEnabled }}
     volumeMounts:
     - name: mongoclient-tls
       mountPath: /etc/ssl/mongoclient/certs
@@ -36,8 +38,6 @@ spec:
     - name: mongoclient-tls-pem
       mountPath: /etc/ssl/mongoclient/pem
       readOnly: false
-  dnsPolicy: ClusterFirst
-  restartPolicy: Always
   volumes:
   - name: mongoclient-tls
     secret:
@@ -50,4 +50,5 @@ spec:
         path: ca.pem
   - name: mongoclient-tls-pem
     emptyDir: {}
+{{- end }} # - if .Values.tlsEnabled
 {{- end }}
