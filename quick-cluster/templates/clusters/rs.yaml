@@ -1,0 +1,29 @@
+
+{{- if eq .Values.type "replicaSet" }}
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ReplicaSet
+  members: {{ .Values.members }}
+  version: "8.3.7"
+  persistent: true
+  opsManager:
+    configMapRef:
+      name: {{ .Values.projectName }}-cm
+  credentials: {{ .Values.projectName }}-organization-secret
+  # Disable authentication to be able to manage the database without credentials
+  # do not do this in production environments
+  security:
+    authentication:
+      enabled: {{ .Values.authEnabled }}
+      modes: ["SCRAM"]
+    {{- if eq .Values.tlsEnabled true }}
+    # certsSecretPrefix: {{ .Values.name }}
+    tls:
+      enabled: true
+      ca: {{ .Values.name }}-mdb-tls-ca-configmap
+    {{- end }} # - if eq .Values.tlsEnabled true
+{{- end }}

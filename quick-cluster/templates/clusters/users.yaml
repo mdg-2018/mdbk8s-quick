@@ -1,0 +1,58 @@
+{{- if eq .Values.authEnabled true }}
+apiVersion: mongodb.com/v1
+kind: MongoDBUser
+metadata:
+  name: root
+  namespace: {{ .Values.namespace }}
+spec:
+  username: root
+  db: admin
+  mongodbResourceRef:
+    name: {{ .Values.name }}
+  passwordSecretKeyRef:
+    name: root-password
+    key: password
+  roles:
+  - name: root
+    db: admin
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: root-password
+  namespace: {{ .Values.namespace }}
+stringData:
+  password: {{ .Values.rootPassword }}
+
+---
+
+apiVersion: mongodb.com/v1
+kind: MongoDBUser
+metadata:
+  name: search-sync-source
+  namespace: {{ .Values.namespace }}
+spec:
+  username: search-sync-source
+  db: admin
+  mongodbResourceRef:
+    name: {{ .Values.name }}
+  passwordSecretKeyRef:
+    name: {{ .Values.name }}-search-sync-source-password
+    key: password
+  roles:
+  - name: searchCoordinator
+    db: admin
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-search-sync-source-password
+  namespace: {{ .Values.namespace }}
+stringData:
+  password: {{ .Values.searchSyncUserPassword }}
+
+{{- end }}

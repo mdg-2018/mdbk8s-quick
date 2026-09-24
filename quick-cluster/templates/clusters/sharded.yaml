@@ -1,0 +1,29 @@
+
+{{- if eq .Values.type "shardedCluster" }}
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: ShardedCluster
+  version: "8.3.7"
+  persistent: true
+  opsManager:
+    configMapRef:
+      name: {{ .Values.projectName }}-cm
+  credentials: {{ .Values.projectName }}-organization-secret
+
+  #Settings for sharded cluster
+  shardCount: {{ .Values.shards }}
+  mongodsPerShardCount: {{ .Values.members }}
+  configServerCount: 1
+  mongosCount: {{ .Values.mongosCount }}
+  
+  # Disable authentication to be able to manage the database without credentials
+  # do not do this in production environments
+  security:
+    authentication:
+      enabled: {{ .Values.authEnabled }}
+      modes: ["SCRAM"]
+{{- end }}

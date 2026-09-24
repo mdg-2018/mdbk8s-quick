@@ -1,0 +1,25 @@
+{{- if eq .Values.searchEnabled true }}
+
+apiVersion: mongodb.com/v1
+kind: MongoDBSearch
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  {{- if eq .Values.tlsEnabled true }}
+  security:
+    tls:
+      certsSecretPrefix: ""
+  {{- end }} # - if eq .Values.tlsEnabled true
+  clusters:
+    - replicas: {{ .Values.searchReplicas }}
+      loadBalancer:
+        managed: {}
+      resourceRequirements:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: "1"
+          memory: 1Gi
+{{- end }}

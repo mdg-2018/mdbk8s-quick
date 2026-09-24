@@ -1,0 +1,27 @@
+omPublicKey: "your-om-public-key"
+omPrivateKey: "your-om-private-key"
+
+# Authentication
+authEnabled: true
+rootPassword: "password"
+searchSyncUserPassword: "password"
+
+name: "my-replica-set"
+namespace: "default"
+projectName: "my-project"
+
+# Cluster topology
+members: 3
+type: "replicaSet"
+
+# Sharded Cluster Settings
+shards: 2
+mongosCount: 2
+
+# Search Settings
+searchEnabled: true
+searchReplicas: 2
+
+# TLS settings
+tlsEnabled: true
+certManagerNamespace: cert-manager
