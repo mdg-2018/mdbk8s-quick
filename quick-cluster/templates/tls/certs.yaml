@@ -1,3 +1,5 @@
+### Generate certificate chain if tlsEnabled = true
+{{- if eq .Values.tlsEnabled true }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -41,7 +43,7 @@ apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
   name: {{ .Values.name }}-mdb-tls-ca-configmap
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   sources:
     - secret:
@@ -62,7 +64,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ .Values.name }}-cert
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   secretName: {{ .Values.name }}-cert
   duration: 8760h    # 1 year
@@ -124,8 +126,8 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ .Values.name }}-svc.{{ .Values.namespace }}.svc.cluster.local"
-    - "{{ .Values.name }}-svc.{{ .Values.namespace }}.svc.cluster.local"
+    - "*.{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
+    - "{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ .Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -146,7 +148,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ .Values.name }}-cs.{{ .Values.namespace }}.svc.cluster.local"
+    - "*.{{ .Values.name }}-cs.{{ .Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ .Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -160,7 +162,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ .Values.name }}-search-cert
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   secretName: {{ .Values.name }}-search-cert
   duration: 8760h    # 1 year
@@ -262,3 +264,4 @@ spec:
 ---
 {{- end }} # - range $i := until ( $count | int)
 {{- end }} # - if eq .Values.searchEnabled true
+{{- end }} # - if eq .Values.tlsEnabled true

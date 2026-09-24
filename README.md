@@ -32,7 +32,6 @@ Before deploying, make sure the following are available:
 |---|---|---|
 | `type` | Cluster type. Supported values are `replicaSet` and `shardedCluster` | Choose one based on the demo scenario |
 | `name` | Metadata name used for the MongoDB resource and related objects | Example: `searchtest` |
-| `namespace` | Namespace where the resources are installed | Example: `mongodb` |
 | `projectName` | Ops Manager project name used for configMap and secret naming | Example: `helm-test-4` |
 | `omPublicKey` / `omPrivateKey` | Credentials used to authenticate the operator to Ops Manager | Required |
 | `authEnabled` | Enables MongoDB SCRAM authentication | Usually `true` |
@@ -49,7 +48,6 @@ This is the most common quick demo pattern. It creates a MongoDB replica set and
 ```bash
 helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
-  --set namespace="mongodb" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
   --set projectName="helm-test-4" \
@@ -72,7 +70,6 @@ This example provisions a sharded cluster with search enabled and TLS configured
 ```bash
 helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
-  --set namespace="mongodb" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
   --set projectName="helm-test-4" \

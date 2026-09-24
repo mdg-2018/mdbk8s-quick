@@ -1,5 +1,8 @@
+# General info
 omPublicKey: "your-om-public-key"
 omPrivateKey: "your-om-private-key"
+name: "my-replica-set" # name of your cluster
+projectName: "my-project"
 
 # Tools
 launchClientPod: false
@@ -9,13 +12,9 @@ authEnabled: true
 rootPassword: "password"
 searchSyncUserPassword: "password"
 
-name: "my-replica-set"
-namespace: "default"
-projectName: "my-project"
-
 # Cluster topology
-members: 3
-type: "replicaSet"
+members: 3 # This will be the number of members in your replica set OR members per shard in a sharded cluster
+type: "replicaSet" # "replicaSet" or "shardedCluster"
 
 # Sharded Cluster Settings
 shards: 2
@@ -29,4 +28,4 @@ searchLoadBalancerReplicas: 1
 
 # TLS settings
 tlsEnabled: false
-certManagerNamespace: cert-manager
+certManagerNamespace: cert-manager # Namespace where cert-manager is installed
