@@ -232,7 +232,7 @@ spec:
   usages:
     - server auth
   dnsNames:
-    - "*.{{ $.Values.name }}-svc.mongodb.svc.cluster.local"
+    - "*.{{ $.Values.namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -255,7 +255,7 @@ spec:
   usages:
     - client auth
   dnsNames:
-    - "*.{{ $.Values.name }}-svc.mongodb.svc.cluster.local"
+    - "*.{{ $.Values.namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer

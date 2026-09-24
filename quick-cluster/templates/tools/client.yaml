@@ -1,0 +1,53 @@
+{{- if .Values.launchClientPod }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Values.name }}-mongoclient
+  namespace: {{ .Values.namespace }}
+spec:
+  containers:
+  - command:
+    - sleep
+    - infinity
+    image: mongo
+    name: mongoclient
+    resources: {}
+    volumeMounts:
+    - name: mongoclient-tls
+      mountPath: /etc/ssl/mongoclient/certs
+      readOnly: true
+    - name: mongoclient-tls-ca
+      mountPath: /etc/ssl/mongoclient/ca
+      readOnly: true
+    - name: mongoclient-tls-pem
+      mountPath: /etc/ssl/mongoclient/pem
+      readOnly: true
+  initContainers:
+  - name: tls-setup
+    image: busybox
+    command:
+    - sh
+    - -c
+    - 'cat /etc/ssl/mongoclient/certs/tls.crt /etc/ssl/mongoclient/certs/tls.key > /etc/ssl/mongoclient/pem/mongoclient.pem'
+    volumeMounts:
+    - name: mongoclient-tls
+      mountPath: /etc/ssl/mongoclient/certs
+      readOnly: false
+    - name: mongoclient-tls-pem
+      mountPath: /etc/ssl/mongoclient/pem
+      readOnly: false
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+  - name: mongoclient-tls
+    secret:
+      secretName: {{ .Values.name }}-cert
+  - name: mongoclient-tls-ca
+    configMap:
+      name: {{ .Values.name }}-mdb-tls-ca-configmap
+      items:
+      - key: ca-pem
+        path: ca.pem
+  - name: mongoclient-tls-pem
+    emptyDir: {}
+{{- end }}

@@ -1,6 +1,9 @@
 omPublicKey: "your-om-public-key"
 omPrivateKey: "your-om-private-key"
 
+# Tools
+launchClientPod: false
+
 # Authentication
 authEnabled: true
 rootPassword: "password"
