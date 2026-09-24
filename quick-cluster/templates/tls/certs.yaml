@@ -1,0 +1,264 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.name }}-self-signed-issuer
+spec:
+  selfSigned: {}
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-ca
+  namespace: {{ .Values.certManagerNamespace }}
+spec:
+  isCA: true
+  commonName: mongodb-ca
+  secretName: tls-ca-secret
+  duration: 87600h  # 10 years
+  renewBefore: 8760h  # 1 year
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: {{ .Values.name }}-self-signed-issuer
+    kind: ClusterIssuer
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.name }}-tls-ca-issuer
+spec:
+  ca:
+    secretName: tls-ca-secret
+
+---
+
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: {{ .Values.name }}-mdb-tls-ca-configmap
+  namespace: {{ .Values.namespace }}
+spec:
+  sources:
+    - secret:
+        name: "tls-ca-secret"
+        key: "tls.crt"
+  target:
+    configMap:
+      key: "ca-pem"
+    # trust-manager will automatically create mdb-tls-ca-configmap in all matching namespaces
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: {{ .Values.namespace | quote }}
+
+---
+{{- if eq .Values.type "replicaSet" }}
+# Replica set TLS certificates
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.name }}-cert
+  namespace: {{ .Values.namespace }}
+spec:
+  secretName: {{ .Values.name }}-cert
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ .Values.name }}-svc.mongodb.svc.cluster.local"
+  issuerRef:
+    name: {{ .Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+{{- end }} # - if eq .Values.type "replicaSet"
+---
+{{- if eq .Values.type "shardedCluster"}}
+
+### Generate TLS certificates for each shard in the sharded cluster
+{{- $count := .Values.shards }}
+# Loop from 0 to {{ $count }} inclusive:
+{{- range $i := until ( $count | int) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $.Values.name }}-{{ $i }}-cert"
+spec:
+  secretName: "{{ $.Values.name }}-{{ $i }}-cert"
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ $.Values.name }}-sh.{{ $.Values.namespace }}.svc.cluster.local"
+  issuerRef:
+    name: {{ $.Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+---
+{{- end }}
+---
+### Generate TLS certificates for mongos
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ .Values.name }}-mongos-cert"
+spec:
+  secretName: "{{ .Values.name }}-mongos-cert"
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ .Values.name }}-svc.{{ .Values.namespace }}.svc.cluster.local"
+    - "{{ .Values.name }}-svc.{{ .Values.namespace }}.svc.cluster.local"
+  issuerRef:
+    name: {{ .Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+---
+### Generate TLS certificates for config servers in the sharded cluster
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ .Values.name }}-config-cert"
+spec:
+  secretName: "{{ .Values.name }}-config-cert"
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ .Values.name }}-cs.{{ .Values.namespace }}.svc.cluster.local"
+  issuerRef:
+    name: {{ .Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+
+{{- end }} # - if eq .Values.type "shardedCluster"
+---
+{{- if eq .Values.searchEnabled true }}
+### Generate search certs if replica set
+{{- if eq .Values.type "replicaSet" }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.name }}-search-cert
+  namespace: {{ .Values.namespace }}
+spec:
+  secretName: {{ .Values.name }}-search-cert
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ .Values.name }}-svc.mongodb.svc.cluster.local"
+  issuerRef:
+    name: {{ .Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+
+---
+{{- end }} # - if eq .Values.type "replicaSet"
+
+### Generate search certs for each shard if sharded cluster
+{{- if eq .Values.type "shardedCluster" }}
+{{- $count := .Values.shards }}
+{{- range $i := until ( $count | int) }}
+{{- $searchReplicaCount := $.Values.searchReplicas }}
+{{- range $j := until ( $searchReplicaCount | int) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-cert"
+  namespace: {{ $.Values.namespace }}
+spec:
+  secretName: "{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-cert"
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "*.{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-svc.mongodb.svc.cluster.local"
+  issuerRef:
+    name: {{ $.Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+---
+{{- end }} # - range $j := until (add1 $searchReplicaCount | int)
+{{- end }} # - range $i := until (add1 $count | int)
+{{- end }} # - if eq .Values.type "shardedCluster"
+
+
+### Envoy LB certificates
+{{- $count := .Values.searchLoadBalancerReplicas }}
+{{- range $i := until ( $count | int) }}
+
+# Create a certificate for use by envoy load balancer
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $.Values.name }}-search-lb-{{ $i }}-cert
+  namespace: {{ $.Values.namespace }}
+spec:
+  secretName: {{ $.Values.name }}-search-lb-{{ $i }}-cert
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+  dnsNames:
+    - "*.{{ $.Values.name }}-svc.mongodb.svc.cluster.local"
+  issuerRef:
+    name: {{ $.Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+
+---
+
+# Create client certificate for envoy load balancer
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $.Values.name }}-search-lb-{{ $i }}-client-cert
+  namespace: {{ $.Values.namespace }}
+spec:
+  secretName: {{ $.Values.name }}-search-lb-{{ $i }}-client-cert
+  duration: 8760h    # 1 year
+  renewBefore: 720h  # 30 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - client auth
+  dnsNames:
+    - "*.{{ $.Values.name }}-svc.mongodb.svc.cluster.local"
+  issuerRef:
+    name: {{ $.Values.name }}-tls-ca-issuer
+    kind: ClusterIssuer
+---
+{{- end }} # - range $i := until ( $count | int)
+{{- end }} # - if eq .Values.searchEnabled true

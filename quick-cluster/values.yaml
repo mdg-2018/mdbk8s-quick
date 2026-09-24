@@ -17,11 +17,13 @@ type: "replicaSet"
 # Sharded Cluster Settings
 shards: 2
 mongosCount: 2
+configServerCount: 1
 
 # Search Settings
 searchEnabled: true
 searchReplicas: 2
+searchLoadBalancerReplicas: 1
 
 # TLS settings
-tlsEnabled: true
+tlsEnabled: false
 certManagerNamespace: cert-manager

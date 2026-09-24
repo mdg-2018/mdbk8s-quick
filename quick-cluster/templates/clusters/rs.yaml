@@ -21,7 +21,6 @@ spec:
       enabled: {{ .Values.authEnabled }}
       modes: ["SCRAM"]
     {{- if eq .Values.tlsEnabled true }}
-    # certsSecretPrefix: {{ .Values.name }}
     tls:
       enabled: true
       ca: {{ .Values.name }}-mdb-tls-ca-configmap

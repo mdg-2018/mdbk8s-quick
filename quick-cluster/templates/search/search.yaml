@@ -14,7 +14,8 @@ spec:
   clusters:
     - replicas: {{ .Values.searchReplicas }}
       loadBalancer:
-        managed: {}
+        managed:
+          replicas: {{ .Values.searchLoadBalancerReplicas }}
       resourceRequirements:
         limits:
           cpu: "1"

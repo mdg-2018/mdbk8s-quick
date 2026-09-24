@@ -26,4 +26,9 @@ spec:
     authentication:
       enabled: {{ .Values.authEnabled }}
       modes: ["SCRAM"]
+    {{- if eq .Values.tlsEnabled true }}
+    tls:
+      enabled: true
+      ca: {{ .Values.name }}-mdb-tls-ca-configmap
+    {{- end }} # - if eq .Values.tlsEnabled true
 {{- end }}
