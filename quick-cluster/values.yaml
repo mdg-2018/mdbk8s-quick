@@ -1,6 +1,7 @@
 # General info
 omPublicKey: "your-om-public-key"
 omPrivateKey: "your-om-private-key"
+opsManagerUrl: "https://cloud.mongodb.com" # Leave this value as-is if using cloud manager, otherwise set it to your Ops Manager URL
 name: "my-replica-set" # name of your cluster
 projectName: "my-project"
 

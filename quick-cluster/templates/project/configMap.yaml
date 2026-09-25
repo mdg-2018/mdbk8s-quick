@@ -6,6 +6,6 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
 data:
-  baseUrl: http://om.lab
+  baseUrl: {{ .Values.opsManagerUrl }}
   projectName: {{ .Values.projectName }}
   orgId: "6a0c9cd2da71140ad69b1e48"
