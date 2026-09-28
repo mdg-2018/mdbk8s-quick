@@ -41,7 +41,11 @@ spec:
   volumes:
   - name: mongoclient-tls
     secret:
+    {{- if eq .Values.type "replicaSet" }}
       secretName: {{ .Values.name }}-cert
+    {{- else if eq .Values.type "shardedCluster" }}
+      secretName: {{ .Values.name }}-0-cert
+    {{- end }}
   - name: mongoclient-tls-ca
     configMap:
       name: {{ .Values.name }}-mdb-tls-ca-configmap

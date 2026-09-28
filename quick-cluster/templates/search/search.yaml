@@ -11,6 +11,12 @@ spec:
     tls:
       certsSecretPrefix: ""
   {{- end }} # - if eq .Values.tlsEnabled true
+  {{- if .Values.searchAutoEmbedding.enabled }}
+  autoEmbedding:
+    providerEndpoint: {{ .Values.searchAutoEmbedding.providerEndpoint }}
+    embeddingModelAPIKeySecret:
+      name: auto-embedding-key-secret
+  {{- end }} # - if .Values.searchAutoEmbedding.enabled
   clusters:
     - replicas: {{ .Values.searchReplicas }}
       loadBalancer:

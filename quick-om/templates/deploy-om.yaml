@@ -1,0 +1,40 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBOpsManager
+metadata:
+  name: ops-manager
+  namespace: {{ .Release.Namespace }}
+spec:
+  version: "{{ .Values.omVersion }}"
+  adminCredentials: om-admin-secret
+  {{- if eq .Values.externalAccessEnabled true }}
+  externalConnectivity:
+    type: "{{ .Values.externalConnectivity.type }}"
+  {{- end }}
+  configuration:
+    mms.ignoreInitialUiSetup: "{{ .Values.configuration.mms.ignoreInitialUiSetup }}"
+    automation.versions.source: "{{ .Values.configuration.automation.versions.source }}"
+    mms.adminEmailAddr: "{{ .Values.configuration.mms.adminEmailAddr }}"
+    mms.fromEmailAddr: "{{ .Values.configuration.mms.fromEmailAddr }}"
+    mms.replyToEmailAddr: "{{ .Values.configuration.mms.replyToEmailAddr }}"
+    mms.mail.hostname: "{{ .Values.configuration.mms.mail.hostname }}"
+    mms.mail.port: "{{ .Values.configuration.mms.mail.port }}"
+    mms.mail.ssl: "{{ .Values.configuration.mms.mail.ssl }}"
+    mms.mail.transport: "{{ .Values.configuration.mms.mail.transport }}"
+  applicationDatabase:
+    members: {{ .Values.appdb.members }}
+    version: "{{ .Values.appdb.version }}"
+
+---
+
+# This is a Global Owner User
+apiVersion: v1
+kind: Secret
+metadata:
+  name: om-admin-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  Username: "{{ .Values.auth.omUsername }}"
+  Password: "{{ .Values.auth.omPassword }}" # strong password needed or OM will not start monitoring for AppDB
+  FirstName: "{{ .Values.auth.omFirstName }}" # cannot be empty or MCK will not be able to create
+  LastName: "{{ .Values.auth.omLastName }}"  # cannot be empty or MCK will not be able to create

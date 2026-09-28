@@ -55,7 +55,7 @@ spec:
     # trust-manager will automatically create mdb-tls-ca-configmap in all matching namespaces
     namespaceSelector:
       matchLabels:
-        kubernetes.io/metadata.name: {{ .Values.namespace | quote }}
+        kubernetes.io/metadata.name: {{ .Release.Namespace | quote }}
 
 ---
 {{- if eq .Values.type "replicaSet" }}
@@ -103,7 +103,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ $.Values.name }}-sh.{{ $.Values.namespace }}.svc.cluster.local"
+    - "*.{{ $.Values.name }}-sh.{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -192,7 +192,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: "{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-cert"
-  namespace: {{ $.Values.namespace }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   secretName: "{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-cert"
   duration: 8760h    # 1 year
@@ -223,7 +223,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ $.Values.name }}-search-lb-{{ $i }}-cert
-  namespace: {{ $.Values.namespace }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   secretName: {{ $.Values.name }}-search-lb-{{ $i }}-cert
   duration: 8760h    # 1 year
@@ -234,7 +234,7 @@ spec:
   usages:
     - server auth
   dnsNames:
-    - "*.{{ $.Values.namespace }}.svc.cluster.local"
+    - "*.{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -246,7 +246,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ $.Values.name }}-search-lb-{{ $i }}-client-cert
-  namespace: {{ $.Values.namespace }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   secretName: {{ $.Values.name }}-search-lb-{{ $i }}-client-cert
   duration: 8760h    # 1 year
@@ -257,7 +257,7 @@ spec:
   usages:
     - client auth
   dnsNames:
-    - "*.{{ $.Values.namespace }}.svc.cluster.local"
+    - "*.{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer

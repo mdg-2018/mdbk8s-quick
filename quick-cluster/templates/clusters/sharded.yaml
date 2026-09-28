@@ -31,4 +31,10 @@ spec:
       enabled: true
       ca: {{ .Values.name }}-mdb-tls-ca-configmap
     {{- end }} # - if eq .Values.tlsEnabled true
+  {{- if eq .Values.externalAccessEnabled true }}
+  externalAccess:
+    externalService:
+      spec:
+        type: LoadBalancer
+  {{- end }}
 {{- end }}

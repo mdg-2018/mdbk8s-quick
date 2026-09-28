@@ -1,0 +1,35 @@
+## Ops Manager version
+omVersion: "8.0.26"
+
+## Authentication for Ops Manager
+auth:
+  omUsername: admin
+  omPassword: MongoPassword123!
+  omFirstName: Admin
+  omLastName: User
+
+## App DB
+appdb:
+  members: 3
+  version: "8.0.26"
+
+## OM configuration
+configuration:
+  mms:
+    ignoreInitialUiSetup: "true"
+    adminEmailAddr: support@example.com
+    fromEmailAddr: support@example.com
+    replyToEmailAddr: support@example.com
+    mail:
+      hostname: example.com
+      port: "466"
+      ssl: "false"
+      transport: smtp
+  automation:
+    versions:
+      source: remote
+
+## External access settings
+externalAccessEnabled: false
+externalConnectivity:
+  type: LoadBalancer

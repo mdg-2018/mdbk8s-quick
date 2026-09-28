@@ -4,9 +4,13 @@ omPrivateKey: "your-om-private-key"
 opsManagerUrl: "https://cloud.mongodb.com" # Leave this value as-is if using cloud manager, otherwise set it to your Ops Manager URL
 name: "my-replica-set" # name of your cluster
 projectName: "my-project"
+orgId: "your-org-id"
 
 # Tools
 launchClientPod: false
+
+# External access settings
+externalAccessEnabled: false
 
 # Authentication
 authEnabled: true
@@ -26,6 +30,11 @@ configServerCount: 1
 searchEnabled: true
 searchReplicas: 2
 searchLoadBalancerReplicas: 1
+searchAutoEmbedding:
+  enabled: false
+  providerEndpoint: "https://ai.mongodb.com/v1/embeddings"
+  queryKey: ""
+  indexingKey: ""
 
 # TLS settings
 tlsEnabled: false
