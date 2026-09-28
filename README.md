@@ -50,6 +50,7 @@ helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
+  --set orgId="$MY_ORG_ID" \
   --set projectName="helm-test-4" \
   --set type="replicaSet" \
   --set authEnabled=true \
@@ -72,6 +73,7 @@ helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
+  --set orgId="$MY_ORG_ID" \
   --set projectName="helm-test-4" \
   --set type="shardedCluster" \
   --set authEnabled=true \
