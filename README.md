@@ -34,6 +34,7 @@ Before deploying, make sure the following are available:
 | `name` | Metadata name used for the MongoDB resource and related objects | Example: `searchtest` |
 | `projectName` | Ops Manager project name used for configMap and secret naming | Example: `helm-test-4` |
 | `omPublicKey` / `omPrivateKey` | Credentials used to authenticate the operator to Ops Manager | Required |
+| `orgId` | Ops Manager organization ID | Required |
 | `authEnabled` | Enables MongoDB SCRAM authentication | Usually `true` |
 | `searchEnabled` | Deploys MongoDB Search alongside the cluster | Optional |
 | `tlsEnabled` | Generates TLS certs and configures MongoDB to use them | Optional |
