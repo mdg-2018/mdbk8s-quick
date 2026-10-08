@@ -5,6 +5,11 @@ opsManagerUrl: "https://cloud.mongodb.com" # Leave this value as-is if using clo
 name: "my-replica-set" # name of your cluster
 projectName: "my-project"
 orgId: "your-org-id"
+version: "8.3.7"
+
+# Deploy community instead of enterprise
+# This ignores all Ops Manager settings!
+community: false
 
 # Tools
 launchClientPod: false
@@ -19,7 +24,7 @@ searchSyncUserPassword: "password"
 
 # Cluster topology
 members: 3 # This will be the number of members in your replica set OR members per shard in a sharded cluster
-type: "replicaSet" # "replicaSet" or "shardedCluster"
+type: "replicaSet" # "replicaSet" / "shardedCluster" / "multicluster-replicaSet" / "multicluster-shardedCluster"
 
 # Sharded Cluster Settings
 shards: 2
@@ -27,7 +32,7 @@ mongosCount: 2
 configServerCount: 1
 
 # Search Settings
-searchEnabled: true
+searchEnabled: false
 searchReplicas: 2
 searchLoadBalancerReplicas: 1
 searchAutoEmbedding:
@@ -39,3 +44,15 @@ searchAutoEmbedding:
 # TLS settings
 tlsEnabled: false
 certManagerNamespace: cert-manager # Namespace where cert-manager is installed
+
+# Multicluster settings
+multicluster:
+  membersPerCluster: 1
+  externalDomain: "example.com"
+
+  # Cluster names should match kubeconfig context names
+  clusters:
+    - name: "cluster-1"
+      externalDomain: "cluster-1.example.com"
+    - name: "cluster-2"
+      externalDomain: "cluster-2.example.com"

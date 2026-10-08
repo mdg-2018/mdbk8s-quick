@@ -22,3 +22,12 @@ helm upgrade --install search-test ./quick-cluster --namespace mongodb  \
  --set tlsEnabled=true \
  --set searchLoadBalancerReplicas=2 \
  --set launchClientPod=true
+
+## Deploy a community cluster
+# Note: Community clusters do not require a type to be set, as they are always replica sets.
+helm upgrade --install community-search-test ./quick-cluster --namespace mongodb  \
+--set name="community-search-test"  \
+--set community=true  \
+--set authEnabled=true  \
+--set searchEnabled=true \
+--set launchClientPod=true

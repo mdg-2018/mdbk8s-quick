@@ -1,8 +1,8 @@
 {{- if .Values.launchClientPod }}
 Run this command to connect to your cluster!
 kubectl exec -it -n {{ .Release.Namespace }} {{ .Values.name }}-mongoclient -- /bin/mongosh "mongodb://root:password@{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local/admin" {{- if .Values.tlsEnabled }}\
---tls \
---tlsCertificateKeyFile=/etc/ssl/mongoclient/pem/mongoclient.pem \
---tlsCAFile=/etc/ssl/mongoclient/ca/ca.pem
+ --tls \
+ --tlsCertificateKeyFile=/etc/ssl/mongoclient/pem/mongoclient.pem \
+ --tlsCAFile=/etc/ssl/mongoclient/ca/ca.pem
 {{- end }}
 {{- end }}

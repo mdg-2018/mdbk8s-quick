@@ -52,13 +52,31 @@ spec:
   target:
     configMap:
       key: "ca-pem"
-    # trust-manager will automatically create mdb-tls-ca-configmap in all matching namespaces
     namespaceSelector:
       matchLabels:
         kubernetes.io/metadata.name: {{ .Release.Namespace | quote }}
 
 ---
-{{- if eq .Values.type "replicaSet" }}
+
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: {{ .Values.name }}-mdb-tls-ca-configmap-community
+  namespace: {{ .Release.Namespace }}
+spec:
+  sources:
+    - secret:
+        name: "tls-ca-secret"
+        key: "tls.crt"
+  target:
+    configMap:
+      key: "ca.crt"
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: {{ .Release.Namespace | quote }}
+
+---
+{{- if or (eq .Values.type "replicaSet") .Values.community }}
 # Replica set TLS certificates
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -157,7 +175,7 @@ spec:
 ---
 {{- if eq .Values.searchEnabled true }}
 ### Generate search certs if replica set
-{{- if eq .Values.type "replicaSet" }}
+{{- if or (eq .Values.type "replicaSet") .Values.community }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:

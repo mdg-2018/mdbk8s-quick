@@ -1,5 +1,5 @@
 
-{{- if eq .Values.type "shardedCluster" }}
+{{- if and (eq .Values.type "shardedCluster") .Values.community false }}
 apiVersion: mongodb.com/v1
 kind: MongoDB
 metadata:
@@ -7,7 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   type: ShardedCluster
-  version: "8.3.7"
+  version: "{{ .Values.version }}"
   persistent: true
   opsManager:
     configMapRef:
