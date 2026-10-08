@@ -1,0 +1,40 @@
+{{- if .Values.community }}
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ .Values.name }}
+spec:
+  members: {{ .Values.members }}
+  type: ReplicaSet
+  version: "{{ .Values.version }}"
+  security:
+  {{- if .Values.tlsEnabled }}
+    tls:
+      enabled: true
+      certificateKeySecretRef:
+        name: {{ .Values.name }}-cert
+      caConfigMapRef:
+        name: {{ .Values.name }}-mdb-tls-ca-configmap-community
+        {{- end }} # if .Values.tlsEnabled
+{{- if .Values.authEnabled }}
+    authentication:
+      modes: ["SCRAM"]
+  users:
+    - name: root
+      db: admin
+      passwordSecretRef:
+        name: {{ .Values.name }}-root-password
+      roles:
+        - name: root
+          db: admin
+      scramCredentialsSecretName: {{ .Values.name }}-root-scram
+    - name: search-sync-source
+      db: admin
+      passwordSecretRef:
+        name: {{ .Values.name }}-search-sync-source-password
+      roles:
+        - name: searchCoordinator
+          db: admin
+      scramCredentialsSecretName: {{ .Values.name }}-search-sync-source-scram
+{{- end }} # if .Values.authEnabled
+{{- end }}

@@ -1,4 +1,4 @@
-{{- if eq .Values.authEnabled true }}
+{{- if and (eq .Values.authEnabled true) .Values.community false }}
 apiVersion: mongodb.com/v1
 kind: MongoDBUser
 metadata:
@@ -10,21 +10,11 @@ spec:
   mongodbResourceRef:
     name: {{ .Values.name }}
   passwordSecretKeyRef:
-    name: root-password
+    name: {{ .Values.name }}-root-password
     key: password
   roles:
   - name: root
     db: admin
-
----
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: root-password
-  namespace: {{ .Release.Namespace }}
-stringData:
-  password: {{ .Values.rootPassword }}
 
 ---
 
@@ -45,6 +35,19 @@ spec:
   - name: searchCoordinator
     db: admin
 
+{{- end }}
+
+{{- if .Values.authEnabled }}
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-root-password
+  namespace: {{ .Release.Namespace }}
+stringData:
+  password: {{ .Values.rootPassword }}
+
 ---
 
 apiVersion: v1
@@ -54,5 +57,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 stringData:
   password: {{ .Values.searchSyncUserPassword }}
-
-{{- end }}
+{{- end }} # if .Values.authEnabled

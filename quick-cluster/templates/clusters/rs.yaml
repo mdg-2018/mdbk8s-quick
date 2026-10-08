@@ -1,5 +1,5 @@
 
-{{- if eq .Values.type "replicaSet" }}
+{{- if and .Values.community false (eq .Values.type "replicaSet" )}}
 apiVersion: mongodb.com/v1
 kind: MongoDB
 metadata:
@@ -8,7 +8,7 @@ metadata:
 spec:
   type: ReplicaSet
   members: {{ .Values.members }}
-  version: "8.3.7"
+  version: "{{ .Values.version }}"
   persistent: true
   opsManager:
     configMapRef:

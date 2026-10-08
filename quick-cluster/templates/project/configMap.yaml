@@ -1,3 +1,4 @@
+{{- if and .Values.community false }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,3 +10,4 @@ data:
   baseUrl: {{ .Values.opsManagerUrl }}
   projectName: {{ .Values.projectName }}
   orgId: {{ .Values.orgId }}
+  {{- end }} # if and .Values.community false
