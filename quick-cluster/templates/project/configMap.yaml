@@ -1,4 +1,4 @@
-{{- if and .Values.community false }}
+{{- if eq .Values.community false }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

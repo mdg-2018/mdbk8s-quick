@@ -1,4 +1,4 @@
-{{- if and (eq .Values.authEnabled true) .Values.community false }}
+{{- if and (eq .Values.authEnabled true) (eq .Values.community false) }}
 apiVersion: mongodb.com/v1
 kind: MongoDBUser
 metadata:

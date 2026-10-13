@@ -1,4 +1,4 @@
-{{- if and .Values.community false (eq .Values.type "multicluster-replicaSet" ) }}
+{{- if and (eq .Values.community false) (eq .Values.type "multicluster-replicaSet" ) }}
 apiVersion: mongodb.com/v1
 kind: MongoDBMultiCluster
 metadata:
@@ -26,6 +26,9 @@ spec:
    - clusterName: {{ .name }}
      externalAccess:
        externalDomain: {{ .externalDomain }}
+       externalService:
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: "{podName}.{{ .externalDomain }}"
      members: {{ $.Values.multicluster.membersPerCluster }}
 {{- end }}
 {{- end }}

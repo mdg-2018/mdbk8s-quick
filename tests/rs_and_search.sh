@@ -30,4 +30,5 @@ helm upgrade --install community-search-test ./quick-cluster --namespace mongodb
 --set community=true  \
 --set authEnabled=true  \
 --set searchEnabled=true \
---set launchClientPod=true
+--set launchClientPod=true \
+--set tlsEnabled=true
