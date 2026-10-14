@@ -1,0 +1,15 @@
+searchReplicas: 2
+searchLoadBalancerReplicas: 1
+searchAutoEmbedding:
+  enabled: false
+  providerEndpoint: "https://ai.mongodb.com/v1/embeddings"
+  queryKey: ""
+  indexingKey: ""
+searchCPU: "1"
+searchMemory: "1Gi"
+tlsEnabled: false
+tlsCAFileSecretName: "" # Secret should contain the CA file for TLS verification under the key "ca.crt" If left blank a CA certificate will be generated.
+searchSyncUser: "search-sync-source"  
+searchSyncUserPassword: "password"
+externalHostAndPorts: [] # Comma-separated list of external host:port pairs for the search source
+searchExternalHostname: "" # External hostname for the search load balancer

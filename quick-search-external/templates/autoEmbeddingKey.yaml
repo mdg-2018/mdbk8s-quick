@@ -1,0 +1,10 @@
+{{- if .Values.searchAutoEmbedding.enabled }}
+apiVersion: v1
+stringData:
+  indexing-key: {{ .Values.searchAutoEmbedding.indexingKey }}
+  query-key: {{ .Values.searchAutoEmbedding.queryKey }}
+kind: Secret
+metadata:
+  name: auto-embedding-key-secret
+  namespace: {{ .Release.Namespace }}
+{{- end }}

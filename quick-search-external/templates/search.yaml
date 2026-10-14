@@ -1,0 +1,47 @@
+apiVersion: mongodb.com/v1
+kind: MongoDBSearch
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if eq .Values.tlsEnabled true }}
+  security:
+    tls:
+      certsSecretPrefix: ""
+  {{- end }} # - if eq .Values.tlsEnabled true
+  {{- if .Values.searchAutoEmbedding.enabled }}
+  autoEmbedding:
+    providerEndpoint: {{ .Values.searchAutoEmbedding.providerEndpoint }}
+    embeddingModelAPIKeySecret:
+      name: auto-embedding-key-secret
+  {{- end }} # - if .Values.searchAutoEmbedding.enabled
+  source:
+    username: {{ .Values.searchSyncUser }}
+    passwordSecretRef:
+      name: {{ .Values.name }}-search-sync-source-password
+      key: password
+    external:
+      hostAndPorts: {{ toJson .Values.externalHostAndPorts }}
+  clusters:
+    - replicas: {{ .Values.searchReplicas }}
+      loadBalancer:
+        managed:
+          replicas: {{ .Values.searchLoadBalancerReplicas }}
+          externalHostname: {{ .Values.searchExternalHostname }}
+      resourceRequirements:
+        limits:
+          cpu: {{ .Values.searchCPU }}
+          memory: {{ .Values.searchMemory }}
+        requests:
+          cpu: {{ .Values.searchCPU }}
+          memory: {{ .Values.searchMemory }}
+    
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-search-sync-source-password
+  namespace: {{ .Release.Namespace }}
+stringData:
+  password: {{ .Values.searchSyncUserPassword }}
