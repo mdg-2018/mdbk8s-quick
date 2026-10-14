@@ -24,9 +24,9 @@ spec:
           replicas: {{ .Values.searchLoadBalancerReplicas }}
       resourceRequirements:
         limits:
-          cpu: "1"
-          memory: 1Gi
+          cpu: {{ .Values.searchCPU }}
+          memory: {{ .Values.searchMemory }}
         requests:
-          cpu: "1"
-          memory: 1Gi
-{{- end }}
+          cpu: {{ .Values.searchCPU }}
+          memory: {{ .Values.searchMemory }}
+{{- end }} # - if eq .Values.searchEnabled true
