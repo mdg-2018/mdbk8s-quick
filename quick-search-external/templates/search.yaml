@@ -21,7 +21,11 @@ spec:
       name: {{ .Values.name }}-search-sync-source-password
       key: password
     external:
+    {{- if .Values.sharded }}
+      shardedCluster: {{ toJson .Values.shardedClusterTopology }}
+    {{- else }}
       hostAndPorts: {{ toJson .Values.externalHostAndPorts }}
+    {{- end }}
   clusters:
     - replicas: {{ .Values.searchReplicas }}
       loadBalancer:
@@ -45,3 +49,23 @@ metadata:
   namespace: {{ .Release.Namespace }}
 stringData:
   password: {{ .Values.searchSyncUserPassword }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.name }}-search-0-proxy-svc
+  name: {{ .Values.name }}-search-0-lb
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: 27028-27028
+    port: 27028
+    protocol: TCP
+    targetPort: 27028
+  selector:
+    app: {{ .Values.name }}-search-0-proxy-svc
+  sessionAffinity: None
+  type: LoadBalancer
