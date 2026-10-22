@@ -1,0 +1,22 @@
+# Search configuration
+searchReplicas: 2
+searchAutoEmbedding:
+  enabled: false
+  providerEndpoint: "https://ai.mongodb.com/v1/embeddings"
+  queryKey: ""
+  indexingKey: ""
+
+# Resources
+searchCPU: "1"
+searchMemory: "1Gi"
+
+# Security
+searchSyncUser: "search-sync-source"  
+searchSyncUserPassword: "password"
+
+# Load balancer and external access
+searchLoadBalancerReplicas: 1
+searchExternalHostname: "" # External hostname for the search load balancer
+
+# MongoDB cluster configuration
+externalHostAndPorts: [] # Comma-separated list of external host:port pairs for the search source - Ignored for sharded clusters

@@ -1,0 +1,1 @@
+Search deployed in kubernetes with mongod running outside of kubernetes
