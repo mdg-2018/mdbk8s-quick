@@ -1,3 +1,12 @@
+# General
+name: "quick-search" # Name of the search deployment
+opsManager:
+  metricsEnabled: false
+  agentAPIKey: ""
+  baseURL: "" # Base URL for the Ops Manager instance
+  projectName: ""
+  orgId: ""
+
 # Search configuration
 searchReplicas: 2
 searchAutoEmbedding:
@@ -17,6 +26,18 @@ searchSyncUserPassword: "password"
 # Load balancer and external access
 searchLoadBalancerReplicas: 1
 searchExternalHostname: "" # External hostname for the search load balancer
+k8sLoadBalancerDnsName: "k8s.example.com" # DNS name for the Kubernetes load balancer
 
 # MongoDB cluster configuration
 externalHostAndPorts: [] # Comma-separated list of external host:port pairs for the search source - Ignored for sharded clusters
+extClusterType: "replicaSet" # Type of the external MongoDB cluster (e.g., "replicaSet", "sharded")
+
+# TLS configuration
+tlsEnabled: false
+tlsCA: "" # Path to the TLS CA certificate file
+tlsClusterCert: "" # Path to the TLS mongodb cluster certificate
+tlsClusterKey: "" # Path to the TLS mongodb cluster key certificate
+certManagerNamespace: "cert-manager" # Namespace where cert-manager is installed
+
+
+#tlsCAKey: "" # Path to the TLS CA key certificate

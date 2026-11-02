@@ -81,10 +81,10 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ .Values.name }}-cert
+  name: "quick-{{ .Values.name }}-cert"
   namespace: {{ .Release.Namespace }}
 spec:
-  secretName: {{ .Values.name }}-cert
+  secretName: "quick-{{ .Values.name }}-cert"
   duration: 8760h    # 1 year
   renewBefore: 720h  # 30 days
   privateKey:
@@ -94,7 +94,8 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ .Values.name }}-svc.mongodb.svc.cluster.local"
+    - "*.{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
+    - "{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ .Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -109,9 +110,9 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ $.Values.name }}-{{ $i }}-cert"
+  name: "quick-{{ $.Values.name }}-{{ $i }}-cert"
 spec:
-  secretName: "{{ $.Values.name }}-{{ $i }}-cert"
+  secretName: "quick-{{ $.Values.name }}-{{ $i }}-cert"
   duration: 8760h    # 1 year
   renewBefore: 720h  # 30 days
   privateKey:
@@ -122,6 +123,7 @@ spec:
     - client auth
   dnsNames:
     - "*.{{ $.Values.name }}-sh.{{ $.Release.Namespace }}.svc.cluster.local"
+    - "{{ $.Values.name }}-sh.{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -132,9 +134,9 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ .Values.name }}-mongos-cert"
+  name: "quick-{{ .Values.name }}-mongos-cert"
 spec:
-  secretName: "{{ .Values.name }}-mongos-cert"
+  secretName: "quick-{{ .Values.name }}-mongos-cert"
   duration: 8760h    # 1 year
   renewBefore: 720h  # 30 days
   privateKey:
@@ -154,9 +156,9 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "{{ .Values.name }}-config-cert"
+  name: "quick-{{ .Values.name }}-config-cert"
 spec:
-  secretName: "{{ .Values.name }}-config-cert"
+  secretName: "quick-{{ .Values.name }}-config-cert"
   duration: 8760h    # 1 year
   renewBefore: 720h  # 30 days
   privateKey:
@@ -167,6 +169,7 @@ spec:
     - client auth
   dnsNames:
     - "*.{{ .Values.name }}-cs.{{ .Release.Namespace }}.svc.cluster.local"
+    - "{{ .Values.name }}-cs.{{ .Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ .Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -192,7 +195,8 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ .Values.name }}-svc.mongodb.svc.cluster.local"
+    - "*.{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
+    - "{{ .Values.name }}-svc.{{ .Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ .Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -222,7 +226,8 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-svc.mongodb.svc.cluster.local"
+    - "*.{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-svc.{{ $.Release.Namespace }}.svc.cluster.local"
+    - "{{ $.Values.name }}-search-{{ $j }}-{{ $.Values.name }}-{{ $i }}-svc.{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -253,6 +258,7 @@ spec:
     - server auth
   dnsNames:
     - "*.{{ $.Release.Namespace }}.svc.cluster.local"
+    - "{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
@@ -276,6 +282,7 @@ spec:
     - client auth
   dnsNames:
     - "*.{{ $.Release.Namespace }}.svc.cluster.local"
+    - "{{ $.Release.Namespace }}.svc.cluster.local"
   issuerRef:
     name: {{ $.Values.name }}-tls-ca-issuer
     kind: ClusterIssuer
