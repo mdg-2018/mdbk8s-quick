@@ -1,10 +1,10 @@
 # General info
 omPublicKey: "your-om-public-key"
 omPrivateKey: "your-om-private-key"
-opsManagerUrl: "https://cloud.mongodb.com" # Leave this value as-is if using cloud manager, otherwise set it to your Ops Manager URL
+omUrl: "https://cloud.mongodb.com" # Leave this value as-is if using cloud manager, otherwise set it to your Ops Manager URL
 name: "my-replica-set" # name of your cluster
 projectName: "my-project"
-orgId: "your-org-id"
+omOrgId: "your-org-id"
 version: "8.3.7"
 
 # Deploy community instead of enterprise

@@ -42,9 +42,9 @@ spec:
   - name: mongoclient-tls
     secret:
     {{- if eq .Values.type "replicaSet" }}
-      secretName: {{ .Values.name }}-cert
+      secretName: quick-{{ .Values.name }}-cert
     {{- else if eq .Values.type "shardedCluster" }}
-      secretName: {{ .Values.name }}-0-cert
+      secretName: quick-{{ .Values.name }}-0-cert
     {{- end }}
   - name: mongoclient-tls-ca
     configMap:

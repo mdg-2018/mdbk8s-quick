@@ -22,6 +22,20 @@ spec:
       key: password
     external:
       hostAndPorts: {{ toJson .Values.externalHostAndPorts }}
+      {{- if .Values.tlsEnabled }}
+      tls:
+        ca:
+          name: {{ .Values.name }}-search-tls-ca-configmap
+      {{- end }} # - if .Values.tlsEnabled
+  {{- if .Values.opsManager.metricsEnabled }}
+  observability:
+    metricsForwarder:
+      opsManager:
+        agentCredentials:
+          name: {{ .Values.name }}-agent-api-key-secret
+        projectConfigMapRef:
+          name: {{ .Values.name }}-ops-manager-project-configmap
+  {{- end }} # - if .Values.opsManager.metricsEnabled
   clusters:
     - replicas: {{ .Values.searchReplicas }}
       loadBalancer:
@@ -51,17 +65,41 @@ stringData:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app: {{ .Values.name }}-search-0-proxy-svc
-  name: {{ .Values.name }}-search-0-lb
+  # labels:
+  #   app: {{ .Values.name }}-search-0-proxy-svc
+  name: {{ .Values.name }}-search-0-ext-lb
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
-  - name: 27028-27028
-    port: 27028
-    protocol: TCP
-    targetPort: 27028
+    - name: 27028-27028
+      port: 27028
+      protocol: TCP
+      targetPort: 27028
   selector:
     app: {{ .Values.name }}-search-0-proxy-svc
-  sessionAffinity: None
   type: LoadBalancer
+
+---
+
+{{- if .Values.opsManager.metricsEnabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-agent-api-key-secret
+  namespace: {{ .Release.Namespace }}
+stringData:
+  agentApiKey: {{ .Values.opsManager.agentAPIKey }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-ops-manager-project-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  baseUrl: {{ .Values.opsManager.baseURL }}
+  projectName: {{ .Values.opsManager.projectName }}
+  orgId: {{ .Values.opsManager.orgId }}
+
+{{- end }}
