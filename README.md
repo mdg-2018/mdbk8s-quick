@@ -34,7 +34,8 @@ Before deploying, make sure the following are available:
 | `name` | Metadata name used for the MongoDB resource and related objects | Example: `searchtest` |
 | `projectName` | Ops Manager project name used for configMap and secret naming | Example: `helm-test-4` |
 | `omPublicKey` / `omPrivateKey` | Credentials used to authenticate the operator to Ops Manager | Required |
-| `orgId` | Ops Manager organization ID | Required |
+| `omOrgId` | Ops Manager organization ID | Required |
+| `omUrl` | Ops Manager URL (defaults to cloud.mongodb.com for cloud manager) | Optional
 | `authEnabled` | Enables MongoDB SCRAM authentication | Usually `true` |
 | `searchEnabled` | Deploys MongoDB Search alongside the cluster | Optional |
 | `tlsEnabled` | Generates TLS certs and configures MongoDB to use them | Optional |
@@ -51,7 +52,8 @@ helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
-  --set orgId="$MY_ORG_ID" \
+  --set omOrgId="$MY_ORG_ID" \
+  --set omUrl="https://cloud.mongodb.com" \
   --set projectName="helm-test-4" \
   --set type="replicaSet" \
   --set authEnabled=true \
@@ -74,7 +76,8 @@ helm upgrade --install search-test ./quick-cluster --namespace mongodb \
   --set name="searchtest" \
   --set omPublicKey="$OM_PUBLIC_KEY" \
   --set omPrivateKey="$OM_PRIVATE_KEY" \
-  --set orgId="$MY_ORG_ID" \
+  --set omOrgId="$MY_ORG_ID" \
+  --set omUrl="https://cloud.mongodb.com" \
   --set projectName="helm-test-4" \
   --set type="shardedCluster" \
   --set authEnabled=true \
