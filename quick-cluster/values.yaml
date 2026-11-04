@@ -5,7 +5,7 @@ omUrl: "https://cloud.mongodb.com" # Leave this value as-is if using cloud manag
 name: "my-replica-set" # name of your cluster
 projectName: "my-project"
 omOrgId: "your-org-id"
-version: "8.3.7"
+version: "9.0.4"
 
 # Deploy community instead of enterprise
 # This ignores all Ops Manager settings!
@@ -49,7 +49,7 @@ certManagerNamespace: cert-manager # Namespace where cert-manager is installed
 
 # Multicluster settings
 multicluster:
-  membersPerCluster: 1
+  membersPerCluster: 2
   externalDomain: "example.com"
 
   # Cluster names should match kubeconfig context names

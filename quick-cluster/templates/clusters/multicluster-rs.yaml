@@ -26,9 +26,9 @@ spec:
    - clusterName: {{ .name }}
      externalAccess:
        externalDomain: {{ .externalDomain }}
-      #  externalService:
-      #   annotations:
-      #     external-dns.alpha.kubernetes.io/hostname: "{podName}.{{ .externalDomain }}"
+       externalService:
+          annotations:
+            external-dns.alpha.kubernetes.io/hostname: "{podName}.{{ .externalDomain }}"
      members: {{ $.Values.multicluster.membersPerCluster }}
 {{- end }}
 {{- end }}
